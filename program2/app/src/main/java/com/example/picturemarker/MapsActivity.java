@@ -106,6 +106,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 test.setImageBitmap(Rotate(imageBitmap, 90));
 
                 // Get location
+                
 
             }
         }
