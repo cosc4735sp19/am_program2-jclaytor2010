@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -30,7 +31,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
 
     private static final int TAKE_PICTURE = 1;
@@ -87,11 +88,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         // Test for LARAMIE
-        LatLng LARAMIE = new LatLng(41.3114d, -105.5911d);
-        googleMap.addMarker(new MarkerOptions().position(LARAMIE));
-
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(LARAMIE));
-
+        mMap = googleMap;
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                // Display image again.
+                return false;
+            }
+        });
     }
 
     @Override
@@ -103,10 +107,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 // Get image
                 Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
-                test.setImageBitmap(Rotate(imageBitmap, 90));
+                imageBitmap = Rotate(imageBitmap, 90);
+                test.setImageBitmap(imageBitmap);
+
+
 
                 // Get location
-
+                //LatLng current = new LatLng(fusedLocationProviderClient.getLastLocation().getResult().getLongitude(), fusedLocationProviderClient.getLastLocation().getResult().getLatitude());
+                //mMap.addMarker(new MarkerOptions().position(current).icon(BitmapDescriptorFactory.fromBitmap(imageBitmap)));
+                //mMap.moveCamera(CameraUpdateFactory.newLatLng(current));
 
             }
         }
