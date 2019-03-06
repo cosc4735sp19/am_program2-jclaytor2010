@@ -22,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -57,9 +58,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private FloatingActionButton button;
     private Button closeButton;
     private ImageView test;
+    private int numPhotos = 0;
     FusedLocationProviderClient fusedLocationProviderClient;
     private SettingsClient settingsClient;
     private SettingsClient mSettingsClient;
+    private double width, height;
+
+
     /**
      * Stores the types of location services the client is interested in using. Used for checking
      * settings to determine if the device has optimal location settings.
@@ -257,12 +262,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        // Test for LARAMIE
+
         mMap = googleMap;
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
                 Bitmap image = (Bitmap)marker.getTag();
+
+
                 test.setImageBitmap(image);
                 test.setVisibility(View.VISIBLE);
                 closeButton.setVisibility(View.VISIBLE);
@@ -277,19 +284,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (requestCode == TAKE_PICTURE &&
                 resultCode == RESULT_OK) {
             if (data != null && data.getExtras() != null) {
-
+                numPhotos++;
                 // Get image
                 Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
                 imageBitmap = Rotate(imageBitmap, 90);
                 //test.setImageBitmap(imageBitmap);
 
+                Bitmap resized = Bitmap.createScaledBitmap(imageBitmap, 100,100, true);
+                width = imageBitmap.getWidth();
+                height = imageBitmap.getHeight();
 
 
                 // Get location
                 //LatLng current = new LatLng(41.3114, -105.5911);
                 LatLng current = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
 
-                Marker currentMarker = mMap.addMarker(new MarkerOptions().position(current).icon(BitmapDescriptorFactory.fromBitmap(imageBitmap)));
+                Marker currentMarker = mMap.addMarker(new MarkerOptions().position(current).icon(BitmapDescriptorFactory.fromBitmap(resized)).title("Photo " + numPhotos));
                 currentMarker.setTag(imageBitmap);
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(current));
 
@@ -316,4 +326,5 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         };
     }
+
 }
